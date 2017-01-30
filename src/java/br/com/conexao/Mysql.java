@@ -2,13 +2,14 @@ package br.com.conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Mysql {
 
     private static boolean connect = false;
+    public static ResultSet resultset = null;
 
     public static java.sql.Connection getConexaoMySQL() {
         Connection connection = null;
@@ -17,10 +18,10 @@ public class Mysql {
             Class.forName("com.mysql.jdbc.Driver");
 
             String serverName = "localhost";
-            String database = "ecommerce";
+            String database = "sys";
             String url = "jdbc:mysql://" + serverName + "/" + database;
             String username = "root";
-            String password = "masterkey";
+            String password = "Masterkey";
 
             connection = DriverManager.getConnection(url, username, password);
 
@@ -34,7 +35,7 @@ public class Mysql {
         return connection;
     }
 
-    public static boolean conectado() {        
+    public static boolean conectado() {
         return connect;
     }
 
@@ -52,5 +53,71 @@ public class Mysql {
         FecharConexao();
         return Mysql.getConexaoMySQL();
     }
+    
+    public void insertSQL(String sql) {
+        Connection con = getConexaoMySQL();
+        PreparedStatement stmt = null;
 
+        try {
+            stmt = con.prepareStatement(sql);
+
+            stmt.executeUpdate();
+
+            System.out.println("Gravado com sucesso!");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao inserir no banco de dados:", ex);
+        } finally {
+            FecharConexao();
+        }
+    }
+
+    public void updateSQL(String sql) {
+        Connection con = getConexaoMySQL();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = con.prepareStatement(sql);
+
+            stmt.executeUpdate();
+
+            System.out.println("Atualizado com sucesso!");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao fazer update no banco de dados:", ex);
+        } finally {
+            FecharConexao();
+        }
+    }
+
+    public void deleteSQL(String sql) {
+        Connection con = getConexaoMySQL();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = con.prepareStatement(sql);
+
+            stmt.executeUpdate();
+
+            System.out.println("Deletado com sucesso!");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao deletar dados do banco de dados:", ex);
+        } finally {
+            FecharConexao();
+        }
+    }
+
+    public void executeSQL(String sql) {
+        Connection con = getConexaoMySQL();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = con.prepareStatement(sql);
+
+            resultset = stmt.executeQuery();
+
+            System.out.println("Executado com sucesso!");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao executar select no banco de dados:", ex);
+        }
+    }
+    
 }

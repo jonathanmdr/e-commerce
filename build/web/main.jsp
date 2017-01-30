@@ -7,13 +7,13 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Admin</title>
+        <title>e-commerce</title>
     </head>
     <body>
     </body>
 </html>
 
 <% } else {
-        response.sendRedirect("/e-commerceWeb/index.jsp");
+        response.sendRedirect("/e-commerce");
     }
 %>

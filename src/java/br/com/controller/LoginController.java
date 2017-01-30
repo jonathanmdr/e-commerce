@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-public class LoginController {
+public class LoginController extends Mysql {
 
     public static Boolean login(String usuario, String senha) {
         return (usuario != null && senha != null && LoginController.existe(usuario, senha));
@@ -20,18 +20,24 @@ public class LoginController {
     }
 
     public static Boolean estaLogado(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        return cookies[1].getName().equals("usuario") && cookies[2].getName().equals("senha");
+        try {
+            Cookie[] cookies = request.getCookies();
+            return (cookies[1].getName().equals("usuario") && cookies[2].getName().equals("senha"));
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     public static Boolean existe(String usuario, String senha) {
         try {
+
             String usuarioBd = null;
             String senhaBd = null;
 
             Connection con = Mysql.getConexaoMySQL();
 
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ? LIMIT 1");
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM USER WHERE USERNAME = ? AND PASSWORD = ? LIMIT 1");
             stmt.setString(1, usuario);
             stmt.setString(2, senha);
 
@@ -50,7 +56,28 @@ public class LoginController {
         }
     }
 
+    public int getIdUsuario(String usuario) {
+
+        StringBuffer sql = new StringBuffer();
+
+        sql.delete(0, sql.length());
+        sql.append("SELECT * FROM USER WHERE USERNAME = '");
+        sql.append(usuario).append("'");
+        executeSQL(sql.toString());
+
+        try {
+            resultset.first();
+            int id = resultset.getInt("id");
+            return id;
+        } catch (SQLException ex) {
+            System.out.println("Erro ao consultar usuário por descrição!: " + ex);
+            return 0;
+        }
+
+    }
+
     public static Cookie getCookie(String erro, boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }
